@@ -1,3 +1,4 @@
+package mypackage;
 
 import java.awt.EventQueue;
 
@@ -15,8 +16,8 @@ import java.awt.event.ActionEvent;
 
 public class Main extends JFrame implements ComponentListener {
 
-	private static JPanel contentPane;
-	private static ArrayList<Item> collection = new ArrayList<Item>();  
+	private static JPanel contentPane = null;
+	private static ArrayList<Item> collection = null;  
 	JButton btn = null;
 	PieChart pc = null;
 	
@@ -24,6 +25,8 @@ public class Main extends JFrame implements ComponentListener {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		collection = new ArrayList<Item>();
 		
 		collection.add(new Item("University", 900, Color.black));
 		collection.add(new Item("College", 300, Color.green));
@@ -78,19 +81,17 @@ public class Main extends JFrame implements ComponentListener {
 	}
 	
 	public void updatePositioning(int width, int height) {
-		final float fraction = 0.666666f;
-		final float n = ((float) Math.min(this.getHeight(), this.getWidth())) * fraction;
-		final int side = (int) Math.round(n);
+		float fraction = 0.666666f;
+		float n = ((float) Math.min(this.getHeight(), this.getWidth())) * fraction;
+		int side = (int) Math.round(n);
+	
+		int yOffset = 25;
 		
-		final int yOffset = 25;
-		
-		final int x = (width / 2) - (side / 2);
-		final int y = (height / 2) - ((side + yOffset) / 2);
+		int x = (width / 2) - (side / 2);
+		int y = (height / 2) - ((side + yOffset) / 2);
 		
 		btn.setBounds(0, 0, width, height);
-		
 		pc.setBounds(x, y, side, side);
-
 	}
 
 	@Override

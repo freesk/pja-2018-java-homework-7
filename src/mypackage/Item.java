@@ -1,3 +1,4 @@
+package mypackage;
 import java.awt.Color;
 
 public class Item {

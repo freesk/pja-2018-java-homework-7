@@ -1,3 +1,4 @@
+package mypackage;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -33,17 +34,19 @@ class PieChart extends JComponent {
 	private boolean isAnimated = false;
 	
 	public PieChart(ArrayList<Item> collection) {
-		slices = new ArrayList<Slice>();
-		
-		double total = 0.0D;
-
-		for (int i = 0; i < collection.size(); i++) {
-			total += collection.get(i).value;
-		}
+		slices = buildTheSlices(collection);
+	}
+	 
+	private ArrayList<Slice> buildTheSlices(ArrayList<Item> collection) {
+		ArrayList<Slice> slices = new ArrayList<Slice>();
 		
 		int initialAngle = 90;
 		int currentAngle = initialAngle;
 		int sumOfarcAngles = 0;
+		
+		double total = 0.0D;
+		
+		for (Item item : collection) total += item.value;
 
 		for (int i = 0; i < collection.size(); i++) {
 
@@ -63,6 +66,7 @@ class PieChart extends JComponent {
 			slices.add(new Slice(collection.get(i), startAngle, arcAngle));
 		}
 		
+		return slices;
 	}
 
 	public void paint(Graphics g) {
@@ -70,49 +74,100 @@ class PieChart extends JComponent {
 	}
 	
 	public void selectItemByIndex(int newIndex) {
-		
+		// doesn't accept new calls if there one already running 
 		if (isAnimated) return;
 		
+		int numberOfSlices = slices.size();
 		int offset = 0;
 		int index = newIndex;
 		
-		if (newIndex > slices.size() - 1) {
+		// if the new index exceeds the number of slices
+		if (index > numberOfSlices - 1) {
 			index = 0;
 		}
 		
+		// for all except 0 element, calculate the offset 
 		if (index > 0) {
 			for (int i = 0; i < index; i++) {
 				offset += slices.get(i).arcAngle; 
 			}
 		}
+				
+		// get the arc angle of the previous slice
+		int prevArcAngle = 0;
+		
+		if (index > 0) {
+			prevArcAngle = slices.get(index - 1).arcAngle;
+		} else {
+			prevArcAngle = slices.get(numberOfSlices - 1).arcAngle;
+		}
 		
 		this.selectedIndex = index;
 		
-		animateToOffset(offset);
+		animateToOffset(offset, prevArcAngle);
 	}
 	
-	private void animateToOffset(int newOffset) {
+	private void animateToOffset(int newOffset, int prevArcAngle) {
+		// block from overlaying calls 
 		isAnimated = true;
+		
+		float scalar = 0.05f; 
+		// calculate the rate by taking in account the size of 
+		// the previous slice
+		int rate = calculateTheRate(prevArcAngle, scalar);
 		
 		Timer timer = new Timer();
 		
+		// hello javascript
 		JComponent that = this;
 		
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
 				if (offset == newOffset) {
+					// turn off the timer
 					timer.cancel();
+					// release
 					isAnimated = false;
+					// stop
 					return;
-				} 
-//				System.out.println("tick");
-				offset = offset + 2;
-				if (offset > 360) offset = 0;
-				that.repaint();
+				}
 				
+				// update the global variable
+				offset = calculateTheOffset(newOffset, offset, rate);
+				
+				// render the pie
+				that.repaint();
 			}
 		}, 0, 1000/60);
+	}
+	
+	private int calculateTheRate(int base, float scalar) {
+		return (int) (Math.round(((float) base) * scalar));
+	}
+	
+	private int calculateTheOffset(int newOffset, int currentOffset, int rate) {
+		int offset = currentOffset;
+		// here comes some logic that handles the spin 
+		// when it goes beyond 360 degrees
+		if (offset + rate > 360) {
+			offset = (offset + rate) - 360;
+		} else {
+			offset = offset + rate;
+		}
+		
+		// this is supposed to catch the current angle and  
+		// force it to be equal to the destination angle
+		// when it gets close to it
+		if (newOffset == 0) {
+			if (0 <= offset && offset <= rate) {
+				offset = newOffset;
+			}
+		} else if (offset > newOffset) {
+			offset = newOffset;
+		}
+		
+		return offset;
 	}
 	
 	public void nextItem() {
