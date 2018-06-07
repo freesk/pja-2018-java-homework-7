@@ -17,17 +17,15 @@ import java.awt.event.ActionEvent;
 public class Main extends JFrame implements ComponentListener {
 
 	private static JPanel contentPane = null;
-	private static ArrayList<Item> collection = null;  
-	JButton btn = null;
-	PieChart pc = null;
+	private static ArrayList<Item> collection = new ArrayList<Item>();  
+	
+	final JButton btn;
+	final PieChart pc;
 	
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		
-		collection = new ArrayList<Item>();
-		
+	public static void main(String[] args) {		
 		collection.add(new Item("University", 900, Color.black));
 		collection.add(new Item("College", 300, Color.green));
 		collection.add(new Item("Trade School", 100, Color.blue));
@@ -73,6 +71,7 @@ public class Main extends JFrame implements ComponentListener {
 		
 		getContentPane().addComponentListener(this);
 		
+		// on click
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				pc.nextItem();
@@ -81,6 +80,7 @@ public class Main extends JFrame implements ComponentListener {
 	}
 	
 	public void updatePositioning(int width, int height) {
+		// 2/3 of the window area 
 		float fraction = 0.666666f;
 		float n = ((float) Math.min(this.getHeight(), this.getWidth())) * fraction;
 		int side = (int) Math.round(n);
@@ -101,20 +101,17 @@ public class Main extends JFrame implements ComponentListener {
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-
-		
+	
 	}
 
 	@Override
 	public void componentShown(ComponentEvent e) {
-
 		
 	}
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
 
-		
 	}
 
 }

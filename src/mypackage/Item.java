@@ -3,9 +3,9 @@ import java.awt.Color;
 
 public class Item {
 
-	public Color color = null;
-	public String title = null;
-	public int value = 0;
+	final public Color color;
+	final public String title;
+	final public int value;
 
 	public Item(String title, int value, Color color) {
 		this.title = title;

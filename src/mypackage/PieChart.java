@@ -16,22 +16,16 @@ class PieChart extends JComponent {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private class Slice {
-		int startAngle = 0;
-		int arcAngle = 0;
-		Item item = null;
-		public Slice(Item item, int startAngle, int arcAngle) {
-			this.item = item; 
-			this.startAngle = startAngle;
-			this.arcAngle = arcAngle;
-		}
-	}
 	
-	private ArrayList<Slice> slices = null;
+	final private ArrayList<Slice> slices;
+	
 	private int selectedIndex = 0;
 	private int offset = 0;
 	private boolean isAnimated = false;
+	
+	public PieChart() {
+		slices = null;
+	}
 	
 	public PieChart(ArrayList<Item> collection) {
 		slices = buildTheSlices(collection);
@@ -176,6 +170,8 @@ class PieChart extends JComponent {
 
 	void drawPie(Graphics2D g, Rectangle area, ArrayList<Slice> slices) {
 		
+		if (slices == null) return;
+		
 		int radius = area.width;
 		int textYoffset = radius/3;
 		
@@ -185,7 +181,7 @@ class PieChart extends JComponent {
 			int startAngle = slice.startAngle + this.offset;
 			int arcAngle = slice.arcAngle;
 			
-			g.setColor(slice.item.color);
+			g.setColor(slice.getColor());
 			g.fillArc(0, 0, radius, radius, startAngle, arcAngle);
 			g.setColor(Color.white);
 		}
@@ -193,7 +189,7 @@ class PieChart extends JComponent {
 		// draw the titles
 		for (int i = 0; i < slices.size(); i++) {			
 			Slice slice = slices.get(i);
-			String title = slice.item.title;
+			String title = slice.getTitle();
 			int startAngle = slice.startAngle + this.offset;
 			int arcAngle = slice.arcAngle;
 			
