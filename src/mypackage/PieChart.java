@@ -115,6 +115,7 @@ class PieChart extends JComponent {
 		// hello javascript
 		JComponent that = this;
 		
+		// 60fps
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
